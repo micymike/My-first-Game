@@ -5,6 +5,13 @@ import random
 # Initialize Pygame
 pygame.init()
 
+# Initialize the mixer
+pygame.mixer.init()
+
+# Load and play background music
+pygame.mixer.music.load("Sia - Unstoppable (Official Video - Live from the Nostalgic For The Present Tour)-160.mp3")
+pygame.mixer.music.play(-1)  # The -1 means the music will loop indefinitely
+
 # Initialize font module
 pygame.font.init()
 
@@ -14,7 +21,8 @@ white = (255, 255, 255)
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
-
+gray = (50, 50, 50)
+dark_gray = (40, 40, 40)
 
 # Set display dimensions
 display_width = 800
@@ -22,12 +30,17 @@ display_height = 600
 
 # Set up the display
 game_display = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption('My Racing Game')
+pygame.display.set_caption('Mike Racing Game')
 
 # Load and resize car image
-car_img = pygame.image.load('car1.jpg')
+car_img = pygame.image.load('car2.png')
 car_img = pygame.transform.scale(car_img, (50, 100))  # Resize car image to 50x100 pixels
 car_width = car_img.get_width()
+
+# Road properties
+road_width = 300
+road_left_edge = (display_width - road_width) // 2
+road_right_edge = road_left_edge + road_width
 
 # Function to display car
 def car(x, y):
@@ -127,13 +140,20 @@ def game_loop():
     y = (display_height * 0.8)
     x_change = 0
 
-    obs_startx = random.randrange(0, display_width)
+    obs_startx = random.randrange(road_left_edge, road_right_edge - 100)
     obs_starty = -600
     obs_speed = 2
-    obs_width = 100
-    obs_height = 100
+    obs_width = 50
+    obs_height = 50
 
     score = 0
+
+    # Scrolling road lines
+    lane_line_height = 40
+    lane_line_gap = 20
+    lane_lines = []
+    for i in range(0, display_height, lane_line_height + lane_line_gap):
+        lane_lines.append(i)
 
     game_exit = False
     crashed = False
@@ -167,9 +187,9 @@ def game_loop():
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    x_change = -1  # Reduce car speed
+                    x_change = -1
                 if event.key == pygame.K_RIGHT:
-                    x_change = 1 # Reduce car speed
+                    x_change = 1
                 if event.key == pygame.K_p:
                     paused()
             if event.type == pygame.KEYUP:
@@ -179,16 +199,32 @@ def game_loop():
         x += x_change
         game_display.fill(white)
 
+        # Draw streets
+        pygame.draw.rect(game_display, dark_gray, [0, 0, road_left_edge, display_height])  # Left street
+        pygame.draw.rect(game_display, dark_gray, [road_right_edge, 0, display_width - road_right_edge, display_height])  # Right street
+
+        # Draw road
+        pygame.draw.rect(game_display, gray, [road_left_edge, 0, road_width, display_height])
+        pygame.draw.line(game_display, white, (road_left_edge, 0), (road_left_edge, display_height), 5)
+        pygame.draw.line(game_display, white, (road_right_edge, 0), (road_right_edge, display_height), 5)
+
+        # Draw scrolling lane lines
+        for i in range(len(lane_lines)):
+            lane_lines[i] += obs_speed
+            if lane_lines[i] > display_height:
+                lane_lines[i] = -lane_line_height
+            pygame.draw.line(game_display, white, (display_width // 2, lane_lines[i]), (display_width // 2, lane_lines[i] + lane_line_height), 5)
+
         obstacles(obs_startx, obs_starty, obs_width, obs_height, black)
         obs_starty += obs_speed
         car(x, y)
 
-        if x > display_width - car_width or x < 0:
+        if x > road_right_edge - car_width or x < road_left_edge:
             crashed = True
 
         if obs_starty > display_height:
             obs_starty = 0 - obs_height
-            obs_startx = random.randrange(0, display_width)
+            obs_startx = random.randrange(road_left_edge, road_right_edge - 100)
             score += 1  # Increase score when an obstacle is avoided
             obs_speed += 0.1
 
