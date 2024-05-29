@@ -32,10 +32,20 @@ display_height = 600
 game_display = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Mike Racing Game')
 
+# Road properties
+road_width = 300
+road_left_edge = (display_width - road_width) // 2
+road_right_edge = road_left_edge + road_width
+
 # Load and resize car image
 car_img = pygame.image.load('car2.png')
 car_img = pygame.transform.scale(car_img, (50, 100))  # Resize car image to 50x100 pixels
 car_width = car_img.get_width()
+
+
+# Load and resize background images
+background_img = pygame.image.load('background.jpg')
+background_img = pygame.transform.scale(background_img, (road_right_edge - road_left_edge, display_height))
 
 # Road properties
 road_width = 300
@@ -187,9 +197,13 @@ def game_loop():
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    x_change = -1
+                    # Adjust the boundary based on the road edges
+                    if x > road_left_edge:
+                        x_change = -1
                 if event.key == pygame.K_RIGHT:
-                    x_change = 1
+                    # Adjust the boundary based on the road edges
+                    if x + car_width < road_right_edge:
+                        x_change = 1
                 if event.key == pygame.K_p:
                     paused()
             if event.type == pygame.KEYUP:
@@ -199,9 +213,9 @@ def game_loop():
         x += x_change
         game_display.fill(white)
 
-        # Draw streets
-        pygame.draw.rect(game_display, dark_gray, [0, 0, road_left_edge, display_height])  # Left street
-        pygame.draw.rect(game_display, dark_gray, [road_right_edge, 0, display_width - road_right_edge, display_height])  # Right street
+        # Draw background images
+        game_display.blit(background_img, (0, 0))  # Left side background
+        game_display.blit(background_img, (road_right_edge, 0))  # Right side background
 
         # Draw road
         pygame.draw.rect(game_display, gray, [road_left_edge, 0, road_width, display_height])
@@ -219,9 +233,6 @@ def game_loop():
         obs_starty += obs_speed
         car(x, y)
 
-        if x > road_right_edge - car_width or x < road_left_edge:
-            crashed = True
-
         if obs_starty > display_height:
             obs_starty = 0 - obs_height
             obs_startx = random.randrange(road_left_edge, road_right_edge - 100)
@@ -234,7 +245,7 @@ def game_loop():
 
         # Display score
         font = pygame.font.SysFont(None, 35)
-        score_text = font.render("Score: " + str(score), True, black)
+        score_text = font.render("Score: " + str(score), True, white)
         game_display.blit(score_text, (10, 10))
 
         # Display Pause button
