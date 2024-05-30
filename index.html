@@ -3,114 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mike Racing Game</title>
-    <style>
-        canvas {
-            border: 1px solid black;
-            display: block;
-            margin: auto;
-        }
-    </style>
+    <title>Car Racing Game</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <button id="Continue-el" onclick="continueEl()" aria-hidden="true">Continue</button>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <script>
-        // Initialize canvas and context
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Load background music
-        const backgroundMusic = new Audio('Sia - Unstoppable (Official Video - Live from the Nostalgic For The Present Tour)-160.mp3');
-        backgroundMusic.loop = true;
-        backgroundMusic.play();
-
-        // Define colors
-        const black = '#000';
-        const white = '#FFF';
-        const red = '#F00';
-        const green = '#0F0';
-        const blue = '#00F';
-        const gray = '#888';
-        const dark_gray = '#444';
-
-        // Set display dimensions
-        const displayWidth = 800;
-        const displayHeight = 600;
-
-        // Road properties
-        const roadWidth = 300;
-        const roadLeftEdge = (displayWidth - roadWidth) / 2;
-        const roadRightEdge = roadLeftEdge + roadWidth;
-
-        // Load and resize car image
-        const carImg = new Image();
-        carImg.src = 'car2.png';
-        carImg.width = 50;
-        carImg.height = 100;
-
-        // Load and resize background image
-        const backgroundImg = new Image();
-        backgroundImg.src = 'background.jpg';
-        backgroundImg.width = roadRightEdge - roadLeftEdge;
-        backgroundImg.height = displayHeight;
-
-        // Function to display car
-        function car(x, y) {
-            ctx.drawImage(carImg, x, y, carImg.width, carImg.height);
-        }
-
-        // Function to display obstacles
-        function obstacles(obsX, obsY, obsW, obsH, color) {
-            ctx.fillStyle = color;
-            ctx.fillRect(obsX, obsY, obsW, obsH);
-        }
-
-        // Function to display text on screen
-        function textObjects(text, font) {
-            ctx.fillStyle = black;
-            ctx.font = font;
-            ctx.fillText(text, displayWidth / 2, displayHeight / 2);
-        }
-
-        function messageDisplay(text) {
-            ctx.clearRect(0, 0, displayWidth, displayHeight);
-            ctx.fillStyle = white;
-            ctx.fillRect(0, 0, displayWidth, displayHeight);
-            const largeText = '115px sans-serif';
-            textObjects(text, largeText);
-        }
-
-        function crash(score) {
-            messageDisplay('Oops!! You Crashed');
-            setTimeout(() => {
-                ctx.clearRect(0, 0, displayWidth, displayHeight);
-                const largeText = '75px sans-serif';
-                textObjects('Score: ' + score, largeText);
-            }, 2000);
-        }
-
-        // Function to pause the game
-        function paused() {
-            // Your pause code here
-        }
-
-        // Function to create buttons
-        function button(msg, x, y, w, h, ic, ac, action = null) {
-            // Your button code here
-        }
-
-        // Start game function
-        function gameIntro() {
-            // Your game intro code here
-        }
-
-        // Main game loop
-        function gameLoop() {
-            // Your game loop code here
-        }
-
-        // Start the game
-        gameIntro();
-    </script>
+    <script src="main.js" defer></script>
 </body>
 </html>

@@ -152,7 +152,7 @@ def game_loop():
 
     obs_startx = random.randrange(road_left_edge, road_right_edge - 100)
     obs_starty = -600
-    obs_speed = 2
+    obs_speed = 1
     obs_width = 50
     obs_height = 50
 
@@ -235,7 +235,7 @@ def game_loop():
 
         if obs_starty > display_height:
             obs_starty = 0 - obs_height
-            obs_startx = random.randrange(road_left_edge, road_right_edge - 100)
+            obs_startx = random.randrange(road_left_edge, road_right_edge - 50)
             score += 1  # Increase score when an obstacle is avoided
             obs_speed += 0.1
 
